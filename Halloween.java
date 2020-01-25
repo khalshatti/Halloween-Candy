@@ -1,38 +1,60 @@
-//***************************************************************************************//
-//    Halloween.java         Author: Khaled Alshatti                                    //
-//                                                                                       // 
-//    A program that shows what its like to hand out candy on halloween.                 //          
-//***************************************************************************************//
+//******************************************************************************************************************
+// Halloween.java    Author: Khaled Alshatti
+//
+// A program that shows what its like to hand out candy on halloween.
+//******************************************************************************************************************
+
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Halloween {
 
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
+		ArrayList<TreatHouse> houses = new ArrayList<TreatHouse>();
 
-		System.out.println("Which candy should we give out first? Candy in pot 1 or candy in pot 2?");
-		int candyPot = scan.nextInt();
+		Random gen = new Random(System.currentTimeMillis());
+		int numHouse = gen.nextInt(10) + 1;
+		
+		// create houses
+		for (int i = 0; i < numHouse; i++) {
+			System.out.println("House " + i );
+			System.out.println("Which candy should we give out first? Candy in pot 1 or candy in pot 2?");
+			int candyPot = scan.nextInt();
 
-		System.out.println("How much candy did we buy?");
-		int totalCandy = scan.nextInt();
+			System.out.println("How much candy did we buy?");
+			int totalCandy = scan.nextInt();
 
-		TreatHouse ourHouse = new TreatHouse(candyPot, totalCandy);
-
-		while (ourHouse.getCandyCount() > 0) {
-			ourHouse.getCandyStatus(); //tells how much candy is left & other stuff
-
-			System.out.println("How much candy per treater should we give out?");
-			int treatsPerTreater = scan.nextInt();
-			ourHouse.setTreatsPerTreater(treatsPerTreater);
-						
-			System.out.println("Knock, knock...." + "Trick or treat!");
-			ourHouse.knockKnock();
-			ourHouse.passOutCandy();
+			houses.add( new TreatHouse(candyPot, totalCandy));
 		}
-
-		System.out.println("Time to turn off the lights and go to bed!");
-		System.out.println("The last candy came from pot number"+ ourHouse.getLastPot());
-		System.out.println("Happy Halloween!");
+		
+		boolean allDone = false;
+		while(!allDone){
+			//Each house will pass out candy for a bit.
+			for (TreatHouse house : houses) {
+				house.passTime();				
+			}
+			
+			//Check to see if all the house are done. If so set sentinel flag to true and exit while loop
+			allDone = false;
+			for(TreatHouse house: houses){
+				//If a single house is not done then all are not done
+				if(!house.isDone()){
+					allDone = false;
+					break;
+				}
+				else
+					allDone = true;
+			}
+			
+			//Call static method to display some statistics about the holiday so far
+			//calling the method to display static variable data. 
+         //Since this is a static method, it can be called directly.
+         TreatHouse.getHalloweenStatus();
+			
+		}
+		System.out.println("All houses are done");
 		scan.close();
 	}
 }
